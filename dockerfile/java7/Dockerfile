@@ -17,3 +17,7 @@ RUN     mv /tmp/apache-maven-3.0.5 /data/tools
 ENV     MAVEN_HOME /data/tools/apache-maven-3.0.5
 ENV     PATH $PATH:$MAVEN_HOME/bin
 
+## tomcat 7
+RUN     wget http://mirrors.hust.edu.cn/apache/tomcat/tomcat-7/v7.0.56/bin/apache-tomcat-7.0.56.tar.gz -P /tmp
+RUN     cd /tmp && tar xzf /tmp/apache-tomcat-7.0.56.tar.gz
+RUN     mv /tmp/apache-tomcat-7.0.56 /data/tools
