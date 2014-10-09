@@ -16,6 +16,3 @@ RUN     cp /data/downloads/danshan.env/linux/.bashrc ~
 RUN     cp /data/downloads/danshan.env/linux/.vimrc ~
 RUN     cp /data/downloads/danshan.env/linux/.screenrc ~
 
-## jenv
-RUN     curl -L -s get.jenv.io | bash
-RUN     /bin/bash -c "source ~/.jenv/bin/jenv-init.sh"
