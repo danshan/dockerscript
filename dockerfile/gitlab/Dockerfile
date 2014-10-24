@@ -73,3 +73,10 @@ RUN cd /home/git/gitlab;\
 
 EXPOSE 80
 EXPOSE 22
+
+ADD . /srv/gitlab
+
+RUN chmod +x /srv/gitlab/start.sh;\
+  chmod +x /srv/gitlab/firstrun.sh
+
+CMD ["/srv/gitlab/start.sh"]
