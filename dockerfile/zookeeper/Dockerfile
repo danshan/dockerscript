@@ -6,6 +6,7 @@ RUN     cd /tmp && tar xzf /tmp/zookeeper-3.4.6.tar.gz
 RUN     mv /tmp/zookeeper-3.4.6 /data/tools
 ENV     ZK_HOME /data/tools/zookeeper-3.4.6
 RUN     cd $ZK_HOME/conf && cp zoo_sample.cfg zoo.cfg
+
 # change dataDir
 ENV     ZK_DATA /data/apps/zookeeper
 RUN     mkdir -p $ZK_DATA
