@@ -9,17 +9,16 @@ ENV     JENKINS_DATA /data/jenkins
 
 RUN     curl -L http://mirrors.jenkins-ci.org/war-stable/$JENKINS_VERSION/jenkins.war -o  /tmp/jenkins.war
 
-RUN     mkdir -p $JENKINS_WORK $JENKINS_DATA
+RUN     mkdir -p $JENKINS_WORK
 RUN     cp /tmp/jenkins.war $JENKINS_WORK
 RUN     useradd -d /home/jenkins -m -s /bin/bash jenkins
 
 COPY    scripts/init.groovy /tmp/WEB-INF/init.groovy.d/tcp-slave-angent-port.groovy
 RUN     cd /tmp && zip -g $JENKINS_WORK/jenkins.war WEB-INF/init.groovy.d/tcp-slave-angent-port.groovy && rm -rf /tmp/WEB-INF
 
-COPY scripts/jenkins.sh /usr/local/bin/jenkins.sh
+COPY    scripts/jenkins.sh /usr/local/bin/jenkins.sh
 RUN     chmod -R 755 /usr/local/bin/jenkins.sh
-RUN     chown -R jenkins $JENKINS_DATA
-VOLUME  $JENKINS_DATA
+RUN     usermod -m -d $JENKINS_DATA jenkins && chown -R jenkins $JENKINS_DATA
 
 # for main web interface:
 EXPOSE 8080
@@ -28,5 +27,7 @@ EXPOSE 8080
 EXPOSE 50000
 
 USER jenkins
+
+VOLUME $JENKINS_DATA
 
 ENTRYPOINT ["/usr/local/bin/jenkins.sh"]
