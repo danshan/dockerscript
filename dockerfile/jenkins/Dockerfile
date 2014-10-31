@@ -1,18 +1,25 @@
 FROM danshan/java7
 
-RUN apt-get update && apt-get install -y wget git curl zip && rm -rf /var/lib/apt/lists/*
+RUN     apt-get install -y zip
 
-ENV JENKINS_VERSION 1.565.3
-RUN mkdir /usr/share/jenkins/
-RUN useradd -d /home/jenkins -m -s /bin/bash jenkins
+# jenkins 1.565.3
+ENV     JENKINS_VERSION 1.565.3
+ENV     JENKINS_WORK /opt/jenkins
+ENV     JENKINS_DATA /data/jenkins
 
-COPY init.groovy /tmp/WEB-INF/init.groovy.d/tcp-slave-angent-port.groovy
-RUN curl -L http://mirrors.jenkins-ci.org/war-stable/$JENKINS_VERSION/jenkins.war -o /usr/share/jenkins/jenkins.war \
-  && cd /tmp && zip -g /usr/share/jenkins/jenkins.war WEB-INF/init.groovy.d/tcp-slave-angent-port.groovy && rm -rf /tmp/WEB-INF
+RUN     curl -L http://mirrors.jenkins-ci.org/war-stable/$JENKINS_VERSION/jenkins.war -o  /tmp/jenkins.war
 
-ENV JENKINS_HOME /var/jenkins_home
-RUN usermod -m -d "$JENKINS_HOME" jenkins && chown -R jenkins "$JENKINS_HOME"
-VOLUME /var/jenkins_home
+RUN     mkdir -p $JENKINS_WORK $JENKINS_DATA
+RUN     cp /tmp/jenkins.war $JENKINS_WORK
+RUN     useradd -d /home/jenkins -m -s /bin/bash jenkins
+
+COPY    scripts/init.groovy /tmp/WEB-INF/init.groovy.d/tcp-slave-angent-port.groovy
+RUN     cd /tmp && zip -g $JENKINS_WORK/jenkins.war WEB-INF/init.groovy.d/tcp-slave-angent-port.groovy && rm -rf /tmp/WEB-INF
+
+COPY scripts/jenkins.sh /usr/local/bin/jenkins.sh
+RUN     chmod -R 755 /usr/local/bin/jenkins.sh
+RUN     chown -R jenkins $JENKINS_DATA
+VOLUME  $JENKINS_DATA
 
 # for main web interface:
 EXPOSE 8080
@@ -22,5 +29,4 @@ EXPOSE 50000
 
 USER jenkins
 
-COPY jenkins.sh /usr/local/bin/jenkins.sh
 ENTRYPOINT ["/usr/local/bin/jenkins.sh"]
